@@ -11,7 +11,7 @@
 window.ASHARCHIVES_VIDEOS = {
   // Anatomy
   "anatomy": {
-    "Introduction to anatomy": "",
+    "Introduction to anatomy": "https://youtu.be/dVyNC8MLkCU?si=-Z9_KzRue7Juov77",
     "Upper limb: overview": "",
     "Brachial plexus": "",
     "Thorax: overview": "",
