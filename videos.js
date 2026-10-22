@@ -142,7 +142,7 @@ window.ASHARCHIVES_VIDEOS = {
   },
   // Ophthalmology
   "ophthalmology": {
-    "Ocular examination": "",
+    "Ocular examination": "https://drive.google.com/file/d/1JG1NRbV953rppvStb_0KKsIEsvHJfK1_/view?usp=drivesdk",
     "Refractive errors": "",
     "Cataract": "",
     "Glaucoma": "",
