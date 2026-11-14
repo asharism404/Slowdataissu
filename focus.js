@@ -1,6 +1,3 @@
-/* Asharchives — Focus timer page.
-   The timer itself lives in nav.js (window.AshFocus) so it keeps running on every page.
-   This file only draws it and records nothing by itself. */
 (() => {
   "use strict";
   const F = window.AshFocus;
@@ -13,7 +10,6 @@
   const yearLabel = y => (y === 4 ? "Final year" : `${y}${y === 1 ? "st" : y === 2 ? "nd" : "rd"} year`);
   const PRESETS = ["25,5", "50,10", "15,3"];
   let customOpen = false;
-
   /* ---------- controls ---------- */
   $("fSubject").innerHTML = `<option value="">No subject</option>` + [1, 2, 3, 4].map(y => {
     const list = SUBJECTS.filter(s => s.year === y);
@@ -21,7 +17,6 @@
   }).join("");
   $("fSubject").value = F.get().subject || "";
   $("fSubject").addEventListener("change", () => F.setSubject($("fSubject").value));
-
   $("btnMain").addEventListener("click", () => F.toggle({ askNotify: true }));
   $("btnReset").addEventListener("click", () => F.reset());
   $("btnSkip").addEventListener("click", () => {
@@ -34,7 +29,6 @@
     if (F.get().status !== "idle" && !confirm("Switch mode? The timer will reset.")) return;
     F.setMode(b.dataset.mode);
   });
-
   $("presets").addEventListener("click", e => {
     const b = e.target.closest("[data-preset]"); if (!b) return;
     if (b.dataset.preset === "custom") { customOpen = !customOpen; render(F.get(), F.remaining()); if (customOpen) $("cFocus").focus(); return; }
@@ -49,13 +43,11 @@
   };
   $("cFocus").addEventListener("change", applyCustom);
   $("cBreak").addEventListener("change", applyCustom);
-
   document.addEventListener("keydown", e => {
     if (e.code !== "Space" || e.ctrlKey || e.metaKey || e.altKey) return;
     if (e.target.closest && e.target.closest("button, a, input, select, textarea, [contenteditable]")) return;
     e.preventDefault(); F.toggle({ askNotify: true });
   });
-
   /* ---------- drawing the timer ---------- */
   function render(state, r) {
     const isFocus = state.mode === "focus", running = state.status === "running", paused = state.status === "paused";
@@ -68,7 +60,6 @@
     $("btnMain").textContent = running ? "Pause" : paused ? "Resume" : isFocus ? "Start focus" : "Start break";
     document.querySelectorAll("[data-mode]").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.mode === state.mode)));
     if (document.activeElement !== $("fSubject")) $("fSubject").value = state.subject || "";
-
     const key = `${state.cfg.focus},${state.cfg.brk}`, isPreset = PRESETS.includes(key);
     document.querySelectorAll("[data-preset]").forEach(b => {
       const on = b.dataset.preset === "custom" ? (customOpen || !isPreset) : b.dataset.preset === key && !customOpen;
@@ -82,7 +73,6 @@
     }
     drawStats();
   }
-
   /* ---------- statistics (redrawn only when the log changes) ---------- */
   let lastLog = null;
   function drawStats() {
@@ -98,16 +88,13 @@
     for (let i = 6; i >= 0; i--) { const d = new Date(); d.setDate(d.getDate() - i); days.push({ key: dayKey(d), label: d.toLocaleDateString(undefined, { weekday: "short" }).slice(0, 3) }); }
     const perDay = days.map(d => ({ ...d, m: mins(log.filter(x => x.d === d.key)) }));
     const max = Math.max(30, ...perDay.map(d => d.m));
-
     $("sToday").textContent = mins(todayLog);
     $("sSessions").textContent = todayLog.length;
     $("sWeek").textContent = perDay.reduce((n, d) => n + d.m, 0);
     $("sTotal").textContent = (mins(log) / 60).toFixed(1).replace(/\.0$/, "");
     $("headToday").textContent = mins(todayLog);
     $("headSessions").textContent = todayLog.length;
-
     $("weekBars").innerHTML = perDay.map((d, i) => `<div class="col${d.m ? " has" : ""}${i === 6 ? " today" : ""}"><b>${d.m || ""}</b><div class="track"><div class="fill" style="height:${Math.max(4, Math.round(d.m / max * 100))}%"></div></div><span>${esc(d.label)}</span></div>`).join("");
-
     const recent = log.slice(-5).reverse();
     $("sessionList").innerHTML = recent.length
       ? recent.map(x => {
@@ -117,6 +104,5 @@
         }).join("")
       : `<li><span>Finish a focus session and it will appear here.</span></li>`;
   }
-
   F.subscribe(render);
 })();

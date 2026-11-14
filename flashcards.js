@@ -1,7 +1,3 @@
-/* Asharchives — Flashcards.
-   Students write their own cards (single or bulk), study them with a simple spaced-repetition
-   schedule (Leitner boxes), and manage everything in a searchable library.
-   Data: localStorage "asharrow-cards" = [{id, sub, topic, q, a, box, due, created, n}] */
 (() => {
   "use strict";
   const { toast, esc, parse, save, K } = window.AshUI;
@@ -16,7 +12,6 @@
   const subj = id => SUBJECTS.find(s => s.id === id);
   const yearLabel = y => (y === 4 ? "Final year" : `${y}${y === 1 ? "st" : y === 2 ? "nd" : "rd"} year`);
   const plural = (n, w) => `${n} ${w}${n === 1 ? "" : "s"}`;
-
   let cards = (() => { const c = parse(K.cards, []); return Array.isArray(c) ? c.filter(x => x && typeof x.q === "string" && typeof x.a === "string") : []; })();
   const persist = () => { save(K.cards, cards); window.AshUI.refreshToday(); };
   const byId = id => cards.find(c => c.id === id);
@@ -26,7 +21,6 @@
   let scope = "due";
   let run = null;
   const recent = [];
-
   /* ---------- select builders ---------- */
   function subjectGroups(selected) {
     let html = `<option value="">Choose a subject</option>`;
@@ -47,7 +41,6 @@
     return `<option value="all">${allLabel} (${cards.length})</option>` +
       list.map(s => `<option value="${s.id}"${s.id === selected ? " selected" : ""}>${s.icon} ${esc(s.name)} (${cards.filter(c => c.sub === s.id).length})</option>`).join("");
   }
-
   /* ---------- stats ---------- */
   function renderStats() {
     $("statTotal").textContent = cards.length;
@@ -55,7 +48,6 @@
     $("statMastered").textContent = cards.filter(c => c.box >= 4).length;
     $("libCount").textContent = cards.length;
   }
-
   /* ---------- views ---------- */
   function setView(name) {
     ["study", "create", "library"].forEach(v => {
@@ -68,7 +60,6 @@
     if (name === "study") renderSetup();
   }
   document.querySelectorAll("[data-view]").forEach(b => b.addEventListener("click", () => setView(b.dataset.view)));
-
   /* ---------- create / edit ---------- */
   function fillCreateSelects(sub, topic) {
     $("cSubject").innerHTML = subjectGroups(sub);
@@ -76,7 +67,6 @@
     $("cTopic").disabled = !sub;
   }
   $("cSubject").addEventListener("change", () => { $("cTopic").innerHTML = topicOptions($("cSubject").value, ""); $("cTopic").disabled = !$("cSubject").value; });
-
   function resetForm(keepContext = true) {
     editingId = null;
     $("cQ").value = ""; $("cA").value = "";
@@ -106,13 +96,10 @@
   });
   $("cardForm").addEventListener("keydown", e => { if ((e.ctrlKey || e.metaKey) && e.key === "Enter") { e.preventDefault(); $("cardForm").requestSubmit(); } });
   $("cCancel").addEventListener("click", () => { resetForm(); setView("library"); });
-
   function renderRecent() {
     $("recentBox").hidden = !recent.length;
     $("recentList").innerHTML = recent.slice(0, 3).map(q => `<li>${esc(q)}</li>`).join("");
   }
-
-  // bulk add
   function parseBulk(text) {
     const out = [], skipped = [];
     text.split(/\r?\n/).forEach(raw => {
@@ -144,9 +131,7 @@
     $("bulk").value = ""; updateBulk();
     toast(`${plural(out.length, "card")} added to ${subj(sub)?.name}`);
   });
-
   const setStudying = on => document.body.classList.toggle("studying", on);
-
   /* ---------- study ---------- */
   const pool = () => {
     const sel = $("studySubject").value;
@@ -174,7 +159,6 @@
   }
   $("studySubject").addEventListener("change", renderSetup);
   document.querySelectorAll("[data-scope]").forEach(b => b.addEventListener("click", () => { scope = b.dataset.scope; renderSetup(); }));
-
   const shuffle = arr => { for (let i = arr.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [arr[i], arr[j]] = [arr[j], arr[i]]; } return arr; };
   function dueLabel(box) {
     const d = INTERVALS[Math.min(box, 4)];
@@ -244,7 +228,6 @@
       e.preventDefault(); flip();
     } else if (run.flipped && ["1", "2", "3"].includes(e.key)) rate(["again", "good", "easy"][Number(e.key) - 1]);
   });
-
   /* ---------- library ---------- */
   const fmtDate = ts => new Date(ts).toLocaleDateString(undefined, { day: "numeric", month: "short" });
   function filteredLibrary() {
@@ -303,13 +286,11 @@
     setTimeout(() => URL.revokeObjectURL(a.href), 1000);
     toast(`Exported ${plural(list.length, "card")}. You can paste the file into “Add many at once” later.`);
   });
-
   window.addEventListener("storage", e => {
     if (e.key !== K.cards || run) return;
     const c = parse(K.cards, []); cards = Array.isArray(c) ? c : [];
     renderStats(); refreshStudy(); if (!$("viewLibrary").hidden) renderLibrary();
   });
-
   /* ---------- start up ---------- */
   const params = new URLSearchParams(location.search);
   let preSub = params.get("subject") || last.sub || "";

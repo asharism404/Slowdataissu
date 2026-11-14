@@ -1,24 +1,10 @@
-/* Asharchives — shared subject list for Flashcards, Notes and Focus.
-   Mirrors the topics in lecture.js. If you rename or add a lecture topic there, update it here too. */
-window.ASH_SUBJECTS = [
-  {"id":"anatomy","name":"Anatomy","year":1,"icon":"🦴","color":"blue","topics":[]},
-  {"id":"physiology","name":"Physiology","year":1,"icon":"🫀","color":"pink","topics":[]},
-  {"id":"biochemistry","name":"Biochemistry","year":1,"icon":"🧬","color":"purple","topics":[]},
-  {"id":"pathology","name":"Pathology","year":2,"icon":"🔬","color":"yellow","topics":[]},
-  {"id":"pharmacology","name":"Pharmacology","year":2,"icon":"💊","color":"green","topics":[]},
-  {"id":"microbiology","name":"Microbiology","year":2,"icon":"🦠","color":"cyan","topics":[]},
-  {"id":"forensic-medicine","name":"Forensic Medicine","year":2,"icon":"⚖️","color":"orange","topics":[]},
-  {"id":"community-medicine","name":"Community Medicine","year":2,"icon":"🌍","color":"green","topics":[]},
-  {"id":"ent","name":"ENT","year":3,"icon":"👂","color":"pink","topics":[]},
-  {"id":"ophthalmology","name":"Ophthalmology","year":3,"icon":"👁️","color":"blue","topics":[]},
-  {"id":"general-medicine","name":"General Medicine","year":3,"icon":"🩺","color":"cyan","topics":[]},
-  {"id":"general-surgery","name":"General Surgery","year":3,"icon":"🩹","color":"yellow","topics":[]},
-  {"id":"obgyn","name":"Obstetrics & Gynaecology","year":3,"icon":"🤰","color":"pink","topics":[]},
-  {"id":"paediatrics","name":"Paediatrics","year":3,"icon":"🧸","color":"purple","topics":[]},
-  {"id":"orthopaedics","name":"Orthopaedics","year":4,"icon":"🦴","color":"orange","topics":[]},
-  {"id":"dermatology","name":"Dermatology","year":4,"icon":"🧴","color":"rose","topics":[]},
-  {"id":"psychiatry","name":"Psychiatry","year":4,"icon":"🧠","color":"purple","topics":[]},
-  {"id":"anaesthesia","name":"Anaesthesia","year":4,"icon":"💉","color":"blue","topics":[]},
-  {"id":"radiology","name":"Radiology","year":4,"icon":"🩻","color":"cyan","topics":[]}
-];
-(window.ASH_SUBJECTS||[]).forEach(s=>{const k=Object.keys((window.ASHARCHIVES_VIDEOS||{})[s.id]||{});if(k.length)s.topics=k;});
+/* Asharchives — subject list for Flashcards, Notes, Focus and Qbank.
+   Lecture names now come from videos.js automatically. Subject details only; add a subject here once, its lectures live in videos.js. */
+(function(){
+  var V = window.ASHARCHIVES_VIDEOS || {};
+  window.ASH_SUBJECTS = [{"id": "anatomy", "name": "Anatomy", "year": 1, "icon": "🦴", "desc": "Structure, regions and clinical anatomy", "topics":[], "color": "blue"}, {"id": "physiology", "name": "Physiology", "year": 1, "icon": "🫀", "desc": "How the human body functions", "topics":[], "color": "pink"}, {"id": "biochemistry", "name": "Biochemistry", "year": 1, "icon": "🧬", "desc": "Molecules, metabolism and enzymes", "topics":[], "color": "purple"}, {"id": "pathology", "name": "Pathology", "year": 2, "icon": "🔬", "desc": "Disease mechanisms, morphology and clinicopathological correlation", "topics":[], "color": "yellow"}, {"id": "pharmacology", "name": "Pharmacology", "year": 2, "icon": "💊", "desc": "Drug actions, mechanisms and rational therapeutics", "topics":[], "color": "green"}, {"id": "microbiology", "name": "Microbiology", "year": 2, "icon": "🦠", "desc": "Microbes, infectious diseases and laboratory diagnosis", "topics":[], "color": "cyan"}, {"id": "forensic-medicine", "name": "Forensic Medicine", "year": 2, "icon": "⚖️", "desc": "Medical law, ethics and forensic practice", "topics":[], "color": "orange"}, {"id": "community-medicine", "name": "Community Medicine", "year": 2, "icon": "🌍", "desc": "Epidemiology, prevention and public health", "topics":[], "color": "green"}, {"id": "ent", "name": "ENT", "year": 3, "icon": "👂", "desc": "Ear, nose and throat", "topics":[], "color": "pink"}, {"id": "ophthalmology", "name": "Ophthalmology", "year": 3, "icon": "👁️", "desc": "Eye examination, disease and vision care", "topics":[], "color": "blue"}, {"id": "general-medicine", "name": "General Medicine", "year": 3, "icon": "🩺", "desc": "Adult medicine and clinical care", "topics":[], "color": "cyan"}, {"id": "general-surgery", "name": "General Surgery", "year": 3, "icon": "🩹", "desc": "Surgical principles, emergencies and common conditions", "topics":[], "color": "yellow"}, {"id": "obgyn", "name": "Obstetrics & Gynaecology", "year": 3, "icon": "🤰", "desc": "Pregnancy, childbirth and reproductive health", "topics":[], "color": "pink"}, {"id": "paediatrics", "name": "Paediatrics", "year": 3, "icon": "🧸", "desc": "Child health, development and common paediatric illness", "topics":[], "color": "purple"}, {"id": "orthopaedics", "name": "Orthopaedics", "year": 4, "icon": "🦴", "desc": "Musculoskeletal conditions, fractures and trauma", "topics":[], "color": "orange"}, {"id": "dermatology", "name": "Dermatology", "year": 4, "icon": "🧴", "desc": "Skin, hair, nail and sexually transmitted disorders", "topics":[], "color": "rose"}, {"id": "psychiatry", "name": "Psychiatry", "year": 4, "icon": "🧠", "desc": "Mental health, diagnosis and treatment principles", "topics":[], "color": "purple"}, {"id": "anaesthesia", "name": "Anaesthesia", "year": 4, "icon": "💉", "desc": "Perioperative medicine, airway and pain management", "topics":[], "color": "blue"}, {"id": "radiology", "name": "Radiology", "year": 4, "icon": "🩻", "desc": "Imaging basics and systematic interpretation", "topics":[], "color": "cyan"}].map(function(s){
+    var t = Object.keys(V[s.id] || {});
+    s.topics = t;
+    return s;
+  });
+})();

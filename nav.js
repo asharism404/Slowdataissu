@@ -1,7 +1,3 @@
-/* Asharchives — shared navigation layer.
-   Adds on every page: hamburger sidebar, bottom tab bar (Home · Cards · Notes · Focus),
-   toast messages, and the focus-timer engine (so a running timer keeps counting while you
-   move between pages). Needs: nav.css. Optional: subjects.js. */
 (() => {
   "use strict";
   const page = document.body.dataset.page || "";
@@ -12,7 +8,6 @@
   const dayKey = d => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
   const fmt = s => `${pad(Math.floor(s / 60))}:${pad(s % 60)}`;
   const esc = s => String(s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
-
   /* ---------- theme (new pages bind their own toggle; home/lecture scripts already do) ---------- */
   const applyTheme = t => { document.documentElement.dataset.theme = t; };
   const setTheme = t => { applyTheme(t); try { localStorage.setItem(K.theme, t); } catch { /* ignore */ } };
@@ -20,7 +15,6 @@
   applyTheme(localStorage.getItem(K.theme) || (prefersDark() ? "dark" : "light"));
   const toggleTheme = () => setTheme(document.documentElement.dataset.theme === "dark" ? "light" : "dark");
   if (page !== "home" && page !== "lecture") document.getElementById("themeToggle")?.addEventListener("click", toggleTheme);
-
   /* ---------- icons ---------- */
   const svg = p => `<svg viewBox="0 0 24 24" aria-hidden="true">${p}</svg>`;
   const ICON = {
@@ -35,7 +29,6 @@
     grid: svg('<rect x="4" y="4" width="6.5" height="6.5" rx="1.8"/><rect x="13.5" y="4" width="6.5" height="6.5" rx="1.8"/><rect x="4" y="13.5" width="6.5" height="6.5" rx="1.8"/><rect x="13.5" y="13.5" width="6.5" height="6.5" rx="1.8"/>')
   };
   window.AshIcons = ICON;
-
   /* ---------- toast ---------- */
   let toastTimer = 0;
   const toast = (message, opts = {}) => {
@@ -56,13 +49,11 @@
     clearTimeout(toastTimer);
     toastTimer = setTimeout(() => el.classList.remove("show"), opts.ms || 4200);
   };
-
   /* ---------- sidebar + bottom tabs ---------- */
   const homeActive = page === "home" || page === "lecture";
   const isActive = key => (key === "home" ? homeActive : page === key);
   const link = (key, href, label, extra = "") =>
     `<a class="drawer-link${isActive(key) ? " is-active" : ""}" href="${href}"${isActive(key) ? ' aria-current="page"' : ""}>${ICON[key] || ICON.grid}<span>${label}</span>${extra}</a>`;
-
   const overlay = document.createElement("div");
   overlay.className = "nav-overlay"; overlay.id = "navOverlay";
   const drawer = document.createElement("aside");
@@ -76,6 +67,7 @@
       <p class="drawer-label">Study tools</p>
       ${link("cards", "flashcards.html", "Flashcards", '<em class="badge" id="badgeCards" hidden></em>')}
       ${link("notes", "notes.html", "Notes", '<em class="badge" id="badgeNotes" hidden></em>')}
+      ${link("qbank", "qbank.html", "Qbank")}
       ${link("focus", "focus.html", "Focus timer", '<em class="badge live" id="badgeFocus" hidden></em>')}
       <p class="drawer-label">Library</p>
       ${link("home", "index.html", "Home")}
@@ -92,17 +84,13 @@
       </button>
       <p class="drawer-note">Everything is saved on this device.</p>
     </div>`;
-
   const dock = document.createElement("nav");
   dock.className = "dock"; dock.setAttribute("aria-label", "Quick tabs");
   const tab = (key, href, label) =>
-    `<a class="dock-tab${isActive(key) ? " is-active" : ""}" href="${href}"${isActive(key) ? ' aria-current="page"' : ""} data-tab="${key}">${ICON[key]}<span class="dock-label">${label}</span></a>`;
-  dock.innerHTML = tab("home", "index.html", "Home") + tab("cards", "flashcards.html", "Cards") + tab("notes", "notes.html", "Notes") + tab("focus", "focus.html", "Focus");
-
+    `<a class="dock-tab${isActive(key) ? " is-active" : ""}" href="${href}"${isActive(key) ? ' aria-current="page"' : ""} data-tab="${key}">${ICON[key] || ICON.grid}<span class="dock-label">${label}</span></a>`;
+  dock.innerHTML = tab("home", "index.html", "Home") + tab("cards", "flashcards.html", "Cards") + tab("notes", "notes.html", "Notes") + tab("qbank", "qbank.html", "Qbank") + tab("focus", "focus.html", "Focus");
   document.body.classList.add("has-dock");
   document.body.append(overlay, drawer, dock);
-
-  // Hamburger button lives in each page's topbar (see the HTML); wire every one we find.
   const menuButtons = document.querySelectorAll("[data-menu-toggle]");
   let lastFocus = null;
   const openMenu = () => {
@@ -137,7 +125,6 @@
   const themeLabel = () => { document.getElementById("drawerThemeLabel").textContent = document.documentElement.dataset.theme === "dark" ? "Switch to light mode" : "Switch to dark mode"; };
   themeLabel();
   new MutationObserver(themeLabel).observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
-
   /* ---------- counts shown in the sidebar ---------- */
   const todayMinutes = () => parse(K.log, []).filter(x => x.d === dayKey(new Date())).reduce((n, x) => n + (x.m || 0), 0);
   const dueCards = () => { const now = Date.now(); const c = parse(K.cards, []); return Array.isArray(c) ? c.filter(x => x.due <= now).length : 0; };
@@ -152,7 +139,6 @@
   }
   refreshToday();
   window.addEventListener("storage", refreshToday);
-
   /* =====================================================================
      Focus timer engine — one shared timer for the whole site.
      State is stored with an absolute end time, so it stays accurate across
@@ -167,7 +153,6 @@
   const remaining = () => state.status === "running" ? Math.max(0, Math.ceil((state.endAt - Date.now()) / 1000)) : state.left;
   const phaseSeconds = mode => (mode === "focus" ? state.cfg.focus : state.cfg.brk) * 60;
   const emit = () => { const r = remaining(); listeners.forEach(fn => fn(state, r)); renderChrome(r); };
-
   function chime() {
     try {
       audioCtx = audioCtx || new (window.AudioContext || window.webkitAudioContext)();
@@ -180,7 +165,6 @@
       });
     } catch { /* audio unavailable */ }
   }
-
   function finishPhase() {
     const wasFocus = state.mode === "focus";
     if (wasFocus) {
@@ -197,7 +181,6 @@
     try { if ("Notification" in window && Notification.permission === "granted" && document.hidden) new Notification("Asharchives", { body: msg }); } catch { /* ignore */ }
     refreshToday();
   }
-
   const tick = () => {
     if (state.status === "running" && Date.now() >= state.endAt) finishPhase();
     emit();
@@ -207,7 +190,6 @@
   window.addEventListener("storage", e => {
     if (e.key === K.focus) { state = { ...DEFAULT_FOCUS, ...parse(K.focus, {}) }; state.cfg = { ...DEFAULT_FOCUS.cfg, ...(state.cfg || {}) }; emit(); }
   });
-
   const AshFocus = {
     get: () => state,
     remaining,
@@ -249,7 +231,6 @@
   };
   window.AshFocus = AshFocus;
   window.AshUI = { toast, esc, parse, save, dayKey, pad, K, ICON, refreshToday };
-
   /* ---------- timer chrome: dock label, sidebar badge, tab title ---------- */
   const focusTab = dock.querySelector('[data-tab="focus"]');
   const focusLabel = focusTab.querySelector(".dock-label");

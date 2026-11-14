@@ -1,34 +1,33 @@
 (() => {
   "use strict";
   const SUBJECTS = [
-    {id:"anatomy",name:"Anatomy",year:1,icon:"🦴",color:"blue",desc:"Structure, regions and clinical anatomy",count:35},
-    {id:"physiology",name:"Physiology",year:1,icon:"🫀",color:"pink",desc:"How the human body functions",count:12},
-    {id:"biochemistry",name:"Biochemistry",year:1,icon:"🧬",color:"purple",desc:"Molecules, metabolism and enzymes",count:10},
-    {id:"pathology",name:"Pathology",year:2,icon:"🔬",color:"yellow",desc:"Disease mechanisms and morphology",count:65},
-    {id:"pharmacology",name:"Pharmacology",year:2,icon:"💊",color:"green",desc:"Drugs, actions and therapeutics",count:62},
-    {id:"microbiology",name:"Microbiology",year:2,icon:"🦠",color:"cyan",desc:"Microbes, infections and immunity",count:14},
-    {id:"forensic-medicine",name:"Forensic Medicine",year:2,icon:"⚖️",color:"orange",desc:"Medical law and forensic practice",count:38},
-    {id:"community-medicine",name:"Community Medicine",year:2,icon:"🌍",color:"green",desc:"Public health and epidemiology",count:98},
-    {id:"ent",name:"ENT",year:3,icon:"👂",color:"pink",desc:"Ear, nose and throat",count:8},
-    {id:"ophthalmology",name:"Ophthalmology",year:3,icon:"👁️",color:"blue",desc:"Eye diseases and examination",count:50},
-    {id:"general-medicine",name:"General Medicine",year:3,icon:"🩺",color:"cyan",desc:"Adult medicine and clinical care",count:16},
-    {id:"general-surgery",name:"General Surgery",year:3,icon:"🩹",color:"yellow",desc:"Surgical principles and practice",count:14},
-    {id:"obgyn",name:"Obstetrics & Gynaecology",year:3,icon:"🤰",color:"pink",desc:"Pregnancy and reproductive health",count:12},
-    {id:"paediatrics",name:"Paediatrics",year:3,icon:"🧸",color:"purple",desc:"Health and diseases of children",count:10},
-    {id:"orthopaedics",name:"Orthopaedics",year:4,icon:"🦴",color:"orange",desc:"Bones, joints and trauma",count:8},
-    {id:"dermatology",name:"Dermatology",year:4,icon:"🧴",color:"rose",desc:"Skin, hair and nail disorders",count:8},
-    {id:"psychiatry",name:"Psychiatry",year:4,icon:"🧠",color:"purple",desc:"Mental health and behaviour",count:8},
-    {id:"anaesthesia",name:"Anaesthesia",year:4,icon:"💉",color:"blue",desc:"Perioperative and pain care",count:8},
-    {id:"radiology",name:"Radiology",year:4,icon:"🩻",color:"cyan",desc:"Imaging and interpretation",count:8}
+    {id:"anatomy",name:"Anatomy",year:1,icon:"🦴",color:"blue",desc:"Structure, regions and clinical anatomy",count:0},
+    {id:"physiology",name:"Physiology",year:1,icon:"🫀",color:"pink",desc:"How the human body functions",count:0},
+    {id:"biochemistry",name:"Biochemistry",year:1,icon:"🧬",color:"purple",desc:"Molecules, metabolism and enzymes",count:0},
+    {id:"pathology",name:"Pathology",year:2,icon:"🔬",color:"yellow",desc:"Disease mechanisms and morphology",count:0},
+    {id:"pharmacology",name:"Pharmacology",year:2,icon:"💊",color:"green",desc:"Drugs, actions and therapeutics",count:0},
+    {id:"microbiology",name:"Microbiology",year:2,icon:"🦠",color:"cyan",desc:"Microbes, infections and immunity",count:0},
+    {id:"forensic-medicine",name:"Forensic Medicine",year:2,icon:"⚖️",color:"orange",desc:"Medical law and forensic practice",count:0},
+    {id:"community-medicine",name:"Community Medicine",year:2,icon:"🌍",color:"green",desc:"Public health and epidemiology",count:0},
+    {id:"ent",name:"ENT",year:3,icon:"👂",color:"pink",desc:"Ear, nose and throat",count:0},
+    {id:"ophthalmology",name:"Ophthalmology",year:3,icon:"👁️",color:"blue",desc:"Eye diseases and examination",count:0},
+    {id:"general-medicine",name:"General Medicine",year:3,icon:"🩺",color:"cyan",desc:"Adult medicine and clinical care",count:0},
+    {id:"general-surgery",name:"General Surgery",year:3,icon:"🩹",color:"yellow",desc:"Surgical principles and practice",count:0},
+    {id:"obgyn",name:"Obstetrics & Gynaecology",year:3,icon:"🤰",color:"pink",desc:"Pregnancy and reproductive health",count:0},
+    {id:"paediatrics",name:"Paediatrics",year:3,icon:"🧸",color:"purple",desc:"Health and diseases of children",count:0},
+    {id:"orthopaedics",name:"Orthopaedics",year:4,icon:"🦴",color:"orange",desc:"Bones, joints and trauma",count:0},
+    {id:"dermatology",name:"Dermatology",year:4,icon:"🧴",color:"rose",desc:"Skin, hair and nail disorders",count:0},
+    {id:"psychiatry",name:"Psychiatry",year:4,icon:"🧠",color:"purple",desc:"Mental health and behaviour",count:0},
+    {id:"anaesthesia",name:"Anaesthesia",year:4,icon:"💉",color:"blue",desc:"Perioperative and pain care",count:0},
+    {id:"radiology",name:"Radiology",year:4,icon:"🩻",color:"cyan",desc:"Imaging and interpretation",count:0}
   ];
-  SUBJECTS.forEach(s=>{const k=Object.keys((window.ASHARCHIVES_VIDEOS||{})[s.id]||{});if(k.length)s.count=k.length;});
+  SUBJECTS.forEach(s=>{const v=(window.ASHARCHIVES_VIDEOS||{})[s.id];s.count=Object.keys(v||{}).length;});
   const $ = id => document.getElementById(id);
   const safeParse = (key, fallback) => { try { return JSON.parse(localStorage.getItem(key)) ?? fallback; } catch { return fallback; } };
   function setTheme(theme) { document.documentElement.dataset.theme = theme; localStorage.setItem("asharrow-theme", theme); }
   const savedTheme = localStorage.getItem("asharrow-theme");
   setTheme(savedTheme || (window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light"));
   $("themeToggle")?.addEventListener("click", () => setTheme(document.documentElement.dataset.theme === "dark" ? "light" : "dark"));
-
   const completed = safeParse("asharrow-completed", []);
   const saved = safeParse("asharrow-saved", []);
   const progress = id => {
@@ -58,7 +57,6 @@
   document.addEventListener("keydown", e => {
     if (e.key === "/" && !["INPUT","TEXTAREA","SELECT"].includes(document.activeElement.tagName)) { e.preventDefault(); $("subjectSearch")?.focus(); }
   });
-
   function renderActivity() {
     const dates = [...new Set(completed.map(item => item.split("::")[2]).filter(Boolean))].sort();
     const today = new Date(); today.setHours(0,0,0,0);

@@ -1,6 +1,3 @@
-/* Asharchives — Notes.
-   "My notes": what the student writes from memory after a lecture (saved in "asharrow-journal").
-   "From lectures": read-only view of the Quick notes typed on each lecture page ("asharrow-notes"). */
 (() => {
   "use strict";
   const { toast, esc, parse, save, K } = window.AshUI;
@@ -13,12 +10,10 @@
   const yearLabel = y => (y === 4 ? "Final year" : `${y}${y === 1 ? "st" : y === 2 ? "nd" : "rd"} year`);
   const plural = (n, w) => `${n} ${w}${n === 1 ? "" : "s"}`;
   const fmtDate = ts => new Date(ts).toLocaleDateString(undefined, { day: "numeric", month: "short", year: "numeric" });
-
   let notes = (() => { const n = parse(K.notes, []); return Array.isArray(n) ? n.filter(x => x && typeof x.body === "string") : []; })();
   const persist = () => { save(K.notes, notes); window.AshUI.refreshToday(); };
   let tab = "mine", editingId = null;
   const expanded = new Set();
-
   const lectureNotes = () => {
     const obj = parse(LECTURE_KEY, {});
     return Object.entries(obj).filter(([, v]) => typeof v === "string" && v.trim()).map(([key, body]) => {
@@ -26,7 +21,6 @@
       return { id: key, sub: s ? sid : "", idx: i, topic: s && s.topics[i] ? s.topics[i] : `Lecture ${i + 1}`, body, title: "" };
     });
   };
-
   /* ---------- composer ---------- */
   function subjectGroups(selected) {
     let html = `<option value="">General (no subject)</option>`;
@@ -47,7 +41,6 @@
     $("nTopic").disabled = !sub;
   }
   $("nSubject").addEventListener("change", () => { $("nTopic").innerHTML = topicOptions($("nSubject").value, ""); $("nTopic").disabled = !$("nSubject").value; saveDraft(); });
-
   let draftTimer = 0;
   function saveDraft() {
     if (editingId) return;
@@ -59,7 +52,6 @@
   }
   ["nTitle", "nBody", "nTopic"].forEach(id => $(id).addEventListener("input", saveDraft));
   $("nTopic").addEventListener("change", saveDraft);
-
   document.querySelectorAll("[data-starter]").forEach(b => b.addEventListener("click", () => {
     const ta = $("nBody"), v = ta.value;
     const gap = !v ? "" : v.endsWith("\n\n") ? "" : v.endsWith("\n") ? "\n" : "\n\n";
@@ -67,7 +59,6 @@
     ta.focus(); ta.setSelectionRange(ta.value.length, ta.value.length);
     saveDraft();
   }));
-
   function resetForm() {
     editingId = null;
     $("nTitle").value = ""; $("nBody").value = "";
@@ -93,7 +84,6 @@
   });
   $("noteForm").addEventListener("keydown", e => { if ((e.ctrlKey || e.metaKey) && e.key === "Enter") { e.preventDefault(); $("noteForm").requestSubmit(); } });
   $("nCancel").addEventListener("click", () => { resetForm(); restoreDraft(); });
-
   /* ---------- list ---------- */
   const source = () => (tab === "mine" ? notes : lectureNotes());
   function visible() {
@@ -162,7 +152,6 @@
   }
   $("noteSearch").addEventListener("input", render);
   $("noteSubject").addEventListener("change", render);
-
   $("noteList").addEventListener("click", e => {
     const more = e.target.closest("[data-more]"), pin = e.target.closest("[data-pin]"), ed = e.target.closest("[data-edit]"), del = e.target.closest("[data-del]");
     if (more) { const id = more.dataset.more; expanded.has(id) ? expanded.delete(id) : expanded.add(id); render(); }
@@ -183,7 +172,6 @@
       toast("Note deleted", { action: { label: "Undo", run: () => { notes.splice(i, 0, gone); persist(); render(); } }, ms: 6000 });
     }
   });
-
   /* ---------- tabs ---------- */
   document.querySelectorAll("[data-tab]").forEach(b => b.addEventListener("click", () => {
     tab = b.dataset.tab;
@@ -192,7 +180,6 @@
     $("noteSubject").value = "all"; $("noteSearch").value = "";
     render();
   }));
-
   /* ---------- export ---------- */
   $("exportNotes").addEventListener("click", () => {
     const list = visible(); if (!list.length) return;
@@ -208,12 +195,10 @@
     setTimeout(() => URL.revokeObjectURL(a.href), 1000);
     toast(`Exported ${plural(list.length, "note")}`);
   });
-
   window.addEventListener("storage", e => {
     if (e.key === K.notes) { const n = parse(K.notes, []); notes = Array.isArray(n) ? n : []; render(); }
     if (e.key === LECTURE_KEY) render();
   });
-
   /* ---------- start up ---------- */
   function restoreDraft() {
     const d = parse(DRAFT, null);
