@@ -1,6 +1,6 @@
-const V = "asharchives-v1", SHELL = V + "-shell", RUNTIME = V + "-runtime";
+const V = "asharchives-v3", SHELL = V + "-shell", RUNTIME = V + "-runtime";
 const PRECACHE = ["./", "index.html", "lecture.html", "flashcards.html", "notes.html", "qbank.html", "focus.html",
-  "styles.css", "glass.css", "nav.css", "neumorphism.css", "anim.css", "theme.css", "pyq-day.css", "features.css", "lecture.css", "qbank.css",
+  "styles.css", "glass.css", "nav.css", "anim.css", "theme.css", "pyq-day.css", "features.css", "lecture.css", "qbank.css",
   "videos.js", "subjects.js", "nav.js", "glass.js", "anim.js", "app.js", "pyq-day.js", "lecture.js", "flashcards.js", "notes.js", "focus.js", "qbank.js",
   "pwa.js", "manifest.webmanifest", "favicon-32.png", "apple-touch-icon.png", "icons/icon-192.png", "icons/icon-512.png"];
 

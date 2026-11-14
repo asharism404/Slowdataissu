@@ -9,7 +9,7 @@
   const fmt = s => `${pad(Math.floor(s / 60))}:${pad(s % 60)}`;
   const esc = s => String(s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
   /* ---------- theme (new pages bind their own toggle; home/lecture scripts already do) ---------- */
-  const applyTheme = t => { document.documentElement.dataset.theme = t; };
+  const applyTheme = t => { document.documentElement.dataset.theme = t; document.querySelector('meta[name="theme-color"]')?.setAttribute("content", t === "dark" ? "#000" : "#f3f8fa"); };
   const setTheme = t => { applyTheme(t); try { localStorage.setItem(K.theme, t); } catch { /* ignore */ } };
   const prefersDark = () => window.matchMedia && matchMedia("(prefers-color-scheme: dark)").matches;
   applyTheme(localStorage.getItem(K.theme) || (prefersDark() ? "dark" : "light"));
@@ -89,6 +89,17 @@
   const tab = (key, href, label) =>
     `<a class="dock-tab${isActive(key) ? " is-active" : ""}" href="${href}"${isActive(key) ? ' aria-current="page"' : ""} data-tab="${key}">${ICON[key] || ICON.grid}<span class="dock-label">${label}</span></a>`;
   dock.innerHTML = tab("home", "index.html", "Home") + tab("cards", "flashcards.html", "Cards") + tab("notes", "notes.html", "Notes") + tab("qbank", "qbank.html", "Qbank") + tab("focus", "focus.html", "Focus");
+  const tabs = [...dock.querySelectorAll(".dock-tab")], cur = Math.max(0, tabs.findIndex(t => t.classList.contains("is-active")));
+  dock.style.setProperty("--n", tabs.length);
+  let from = cur, first = true;
+  try { const p = sessionStorage.getItem("ash-dock"); first = p === null; if (p !== null && +p < tabs.length) from = +p; sessionStorage.setItem("ash-dock", cur); } catch { /* ignore */ }
+  if (first) dock.classList.add("dock-enter");
+  const ind = document.createElement("i"); ind.className = "dock-ind"; dock.prepend(ind);
+  const moveInd = i => dock.style.setProperty("--i", i);
+  moveInd(from);
+  if (from !== cur) requestAnimationFrame(() => requestAnimationFrame(() => moveInd(cur)));
+  tabs.forEach((t, i) => t.addEventListener("pointerenter", e => { if (e.pointerType === "mouse") moveInd(i); }));
+  dock.addEventListener("pointerleave", e => { if (e.pointerType === "mouse") moveInd(cur); });
   document.body.classList.add("has-dock");
   document.body.append(overlay, drawer, dock);
   const menuButtons = document.querySelectorAll("[data-menu-toggle]");
