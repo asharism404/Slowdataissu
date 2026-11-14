@@ -10,7 +10,7 @@
   const startOfDay = ts => { const d = new Date(ts); d.setHours(0, 0, 0, 0); return d.getTime(); };
   const dueFor = box => (box <= 0 ? Date.now() : startOfDay(Date.now()) + INTERVALS[Math.min(box, 4)] * DAY);
   const subj = id => SUBJECTS.find(s => s.id === id);
-  const yearLabel = y => (y === 4 ? "Final year" : `${y}${y === 1 ? "st" : y === 2 ? "nd" : "rd"} year`);
+  const yearLabel = y => y === 4 ? "Final year" : `${y}${["st","nd","rd"][y-1]||"th"} year`;
   const plural = (n, w) => `${n} ${w}${n === 1 ? "" : "s"}`;
   let cards = (() => { const c = parse(K.cards, []); return Array.isArray(c) ? c.filter(x => x && typeof x.q === "string" && typeof x.a === "string") : []; })();
   const persist = () => { save(K.cards, cards); window.AshUI.refreshToday(); };

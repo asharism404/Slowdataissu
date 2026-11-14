@@ -16,9 +16,10 @@
   <link rel="stylesheet" href="glass.css">
   <link rel="stylesheet" href="nav.css">
   <script src="videos.js" defer></script>
+  <script src="subjects.js" defer></script>
   <script src="app.js" defer></script>
   <script src="glass.js" defer></script>
-  <script src="subjects.js" defer></script>
+  
   <script src="nav.js" defer></script><script src="pwa.js" defer></script>
   <link rel="stylesheet" href="anim.css">
   <link rel="stylesheet" href="theme.css">
@@ -83,7 +84,7 @@
           <div><p class="eyebrow muted-eyebrow">THE LIBRARY</p><h2>Choose your subject</h2><p class="section-subtitle">Pick up where you left off, or start something new.</p></div>
           <label class="year-select-wrap"><span>Year</span><select id="yearFilter" aria-label="Filter subjects by MBBS year"><option value="all">All years</option><option value="1">1st year</option><option value="2">2nd year</option><option value="3">3rd year</option><option value="4">Final year</option></select></label>
         </div>
-        <div class="subject-grid" id="subjectGrid">
+        <div class="subject-groups" id="subjectGrid">
           <div class="loading-card">Loading subjects…</div>
         </div>
         <p class="empty-state" id="emptyState" hidden>No subjects match your search. Try another name or year.</p>

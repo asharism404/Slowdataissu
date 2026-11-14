@@ -7,7 +7,7 @@
   const CIRC = 816.8;                                   // 2π × r(130)
   const fmt = s => `${pad(Math.floor(s / 60))}:${pad(s % 60)}`;
   const subj = id => SUBJECTS.find(s => s.id === id);
-  const yearLabel = y => (y === 4 ? "Final year" : `${y}${y === 1 ? "st" : y === 2 ? "nd" : "rd"} year`);
+  const yearLabel = y => y === 4 ? "Final year" : `${y}${["st","nd","rd"][y-1]||"th"} year`;
   const PRESETS = ["25,5", "50,10", "15,3"];
   let customOpen = false;
   /* ---------- controls ---------- */

@@ -29,7 +29,7 @@
   });
   document.body.appendChild(layer);
   if (!reduce) {
-    const sel = ".subject-card,.hero-card,.course-hero,.daily-card,.topic-item,.educator-banner";
+    const sel = ".subject-row,.hero-card,.course-hero,.daily-card,.topic-item,.educator-banner";
     document.addEventListener("pointermove", e => {
       const el = e.target.closest && e.target.closest(sel);
       if (!el) return;

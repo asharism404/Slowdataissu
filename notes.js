@@ -7,7 +7,7 @@
   const LECTURE_KEY = "asharrow-notes";
   const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
   const subj = id => SUBJECTS.find(s => s.id === id);
-  const yearLabel = y => (y === 4 ? "Final year" : `${y}${y === 1 ? "st" : y === 2 ? "nd" : "rd"} year`);
+  const yearLabel = y => y === 4 ? "Final year" : `${y}${["st","nd","rd"][y-1]||"th"} year`;
   const plural = (n, w) => `${n} ${w}${n === 1 ? "" : "s"}`;
   const fmtDate = ts => new Date(ts).toLocaleDateString(undefined, { day: "numeric", month: "short", year: "numeric" });
   let notes = (() => { const n = parse(K.notes, []); return Array.isArray(n) ? n.filter(x => x && typeof x.body === "string") : []; })();

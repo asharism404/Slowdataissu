@@ -1,26 +1,6 @@
 (() => {
   "use strict";
-  const SUBJECTS = [
-    {id:"anatomy",name:"Anatomy",year:1,icon:"🦴",color:"blue",desc:"Structure, regions and clinical anatomy",count:0},
-    {id:"physiology",name:"Physiology",year:1,icon:"🫀",color:"pink",desc:"How the human body functions",count:0},
-    {id:"biochemistry",name:"Biochemistry",year:1,icon:"🧬",color:"purple",desc:"Molecules, metabolism and enzymes",count:0},
-    {id:"pathology",name:"Pathology",year:2,icon:"🔬",color:"yellow",desc:"Disease mechanisms and morphology",count:0},
-    {id:"pharmacology",name:"Pharmacology",year:2,icon:"💊",color:"green",desc:"Drugs, actions and therapeutics",count:0},
-    {id:"microbiology",name:"Microbiology",year:2,icon:"🦠",color:"cyan",desc:"Microbes, infections and immunity",count:0},
-    {id:"forensic-medicine",name:"Forensic Medicine",year:2,icon:"⚖️",color:"orange",desc:"Medical law and forensic practice",count:0},
-    {id:"community-medicine",name:"Community Medicine",year:2,icon:"🌍",color:"green",desc:"Public health and epidemiology",count:0},
-    {id:"ent",name:"ENT",year:3,icon:"👂",color:"pink",desc:"Ear, nose and throat",count:0},
-    {id:"ophthalmology",name:"Ophthalmology",year:3,icon:"👁️",color:"blue",desc:"Eye diseases and examination",count:0},
-    {id:"general-medicine",name:"General Medicine",year:3,icon:"🩺",color:"cyan",desc:"Adult medicine and clinical care",count:0},
-    {id:"general-surgery",name:"General Surgery",year:3,icon:"🩹",color:"yellow",desc:"Surgical principles and practice",count:0},
-    {id:"obgyn",name:"Obstetrics & Gynaecology",year:3,icon:"🤰",color:"pink",desc:"Pregnancy and reproductive health",count:0},
-    {id:"paediatrics",name:"Paediatrics",year:3,icon:"🧸",color:"purple",desc:"Health and diseases of children",count:0},
-    {id:"orthopaedics",name:"Orthopaedics",year:4,icon:"🦴",color:"orange",desc:"Bones, joints and trauma",count:0},
-    {id:"dermatology",name:"Dermatology",year:4,icon:"🧴",color:"rose",desc:"Skin, hair and nail disorders",count:0},
-    {id:"psychiatry",name:"Psychiatry",year:4,icon:"🧠",color:"purple",desc:"Mental health and behaviour",count:0},
-    {id:"anaesthesia",name:"Anaesthesia",year:4,icon:"💉",color:"blue",desc:"Perioperative and pain care",count:0},
-    {id:"radiology",name:"Radiology",year:4,icon:"🩻",color:"cyan",desc:"Imaging and interpretation",count:0}
-  ];
+  const SUBJECTS = (window.ASH_SUBJECTS || []).map(s => ({ ...s }));
   SUBJECTS.forEach(s=>{const v=(window.ASHARCHIVES_VIDEOS||{})[s.id];s.count=Object.keys(v||{}).length;});
   const $ = id => document.getElementById(id);
   const safeParse = (key, fallback) => { try { return JSON.parse(localStorage.getItem(key)) ?? fallback; } catch { return fallback; } };
@@ -40,18 +20,27 @@
     const query = ($("subjectSearch")?.value || "").trim().toLowerCase();
     const year = $("yearFilter")?.value || "all";
     const matches = SUBJECTS.filter(s => (s.name + " " + s.desc).toLowerCase().includes(query) && (year === "all" || String(s.year) === year));
-    grid.innerHTML = matches.map(s => {
+    const ord = y => y === 4 ? "Final year" : `${y}${["st","nd","rd"][y-1] || "th"} year`;
+    const rowHtml = s => {
       const pct = progress(s.id);
-      const yearLabel = s.year === 4 ? "Final year" : `${s.year}${s.year===1?"st":s.year===2?"nd":"rd"} year`;
-      return `<a class="subject-card" href="lecture.html?subject=${encodeURIComponent(s.id)}" aria-label="Open ${s.name}">
-        <div class="subject-top"><span class="subject-icon ${s.color}">${s.icon}</span><span class="subject-arrow" aria-hidden="true">↗</span></div>
-        <h3>${s.name}</h3><p>${s.desc}</p>
-        <div class="subject-bottom"><span>${s.count} lecture topics</span><span class="year-pill">${yearLabel}</span></div>
-        <div class="subject-bottom"><span>${pct}% complete</span><span class="progress-track"><span style="width:${pct}%"></span></span></div>
+      return `<a class="subject-row" data-tone="${s.color}" href="lecture.html?subject=${encodeURIComponent(s.id)}" aria-label="Open ${s.name}">
+        <span class="subject-icon">${s.icon}</span>
+        <div><h3>${s.name}</h3><p>${s.desc}</p><div class="subject-meta"><span class="year-pill">${s.count} lecture topics</span></div></div>
+        <div class="subject-side"><span class="subject-pct">${pct}%</span><span class="progress-track"><span style="width:${pct}%"></span></span></div>
       </a>`;
+    };
+    grid.innerHTML = [1, 2, 3, 4].map(y => {
+      const list = matches.filter(s => s.year === y);
+      return list.length ? `<section class="subject-group"><div class="subject-group-head"><h3>${ord(y)}</h3><span>${y === 4 ? "Others" : list.length + " subjects"}</span></div><div class="subject-list">${list.map(rowHtml).join("")}</div></section>` : "";
     }).join("");
     $("emptyState").hidden = matches.length !== 0;
   }
+  $("subjectGrid")?.addEventListener("pointerdown", e => {
+    const row = e.target.closest(".subject-row"); if (!row) return;
+    const r = row.getBoundingClientRect(), d = Math.max(r.width, r.height) * 1.6, rp = document.createElement("i");
+    rp.className = "row-ripple"; rp.style.cssText = `width:${d}px;height:${d}px;left:${e.clientX - r.left - d / 2}px;top:${e.clientY - r.top - d / 2}px`;
+    row.append(rp); setTimeout(() => rp.remove(), 700);
+  });
   $("subjectSearch")?.addEventListener("input", renderSubjects);
   $("yearFilter")?.addEventListener("change", renderSubjects);
   document.addEventListener("keydown", e => {

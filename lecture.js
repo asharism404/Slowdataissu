@@ -38,7 +38,7 @@
   const initialTheme = localStorage.getItem("asharrow-theme");
   setTheme(initialTheme || (window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light"));
   $("themeToggle").addEventListener("click",()=>setTheme(document.documentElement.dataset.theme==="dark"?"light":"dark"));
-  const yearLabel = subject.year===4 ? "Final year MBBS" : `${subject.year}${subject.year===1?"st":subject.year===2?"nd":"rd"} year MBBS`;
+  const yearLabel = subject.year === 4 ? "Final year MBBS" : `${subject.year}${["st","nd","rd"][subject.year-1]||"th"} year MBBS`;
   document.title = `${subject.name} — Asharchives`;
   $("breadcrumbSubject").textContent = subject.name;
   $("courseTitle").textContent = subject.name;
