@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><meta name="theme-color" content="#f3f8fa">
+<title>Shop — Asharchives</title>
+<script>try{document.documentElement.dataset.theme=localStorage.getItem("asharrow-theme")||(matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light")}catch(e){}</script>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="icon" href="favicon-32.png"><link rel="manifest" href="manifest.webmanifest">
+<link rel="stylesheet" href="styles.css"><link rel="stylesheet" href="glass.css"><link rel="stylesheet" href="nav.css"><link rel="stylesheet" href="anim.css"><link rel="stylesheet" href="theme.css">
+<style>
+.shop-hero{position:relative;overflow:hidden;min-height:calc(100vh - 190px);display:grid;place-items:center;text-align:center;padding:48px 20px;border-radius:var(--radius);background:var(--surface);border:1px solid var(--line);box-shadow:var(--card-sh)}
+.blob{position:absolute;border-radius:50%;filter:blur(60px);opacity:.45;animation:drift 12s ease-in-out infinite alternate}
+.b1{width:280px;height:280px;background:var(--c2);top:-70px;left:-60px}.b2{width:240px;height:240px;background:var(--c3);bottom:-60px;right:-40px;animation-delay:-4s}.b3{width:160px;height:160px;background:var(--c4);top:40%;right:20%;animation-delay:-8s}
+@keyframes drift{to{transform:translate(50px,40px) scale(1.25)}}
+.inner{position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;gap:18px}
+.bag{position:relative;width:120px;height:120px;display:grid;place-items:center}
+.bag svg{width:64px;fill:none;stroke:var(--accent);stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;animation:bob 2.4s ease-in-out infinite;transform-origin:50% 100%}
+.bag i{position:absolute;inset:0;border-radius:50%;border:1.5px solid rgba(var(--acc-rgb),.5);animation:ring 2.8s ease-out infinite}.bag i:nth-child(2){animation-delay:-1.4s}
+@keyframes bob{0%,100%{transform:translateY(0) rotate(-4deg)}50%{transform:translateY(-12px) rotate(4deg)}}
+@keyframes ring{from{transform:scale(.5);opacity:.9}to{transform:scale(1.6);opacity:0}}
+.soon-title{font:800 clamp(40px,9vw,84px)/1 Manrope,sans-serif;letter-spacing:-2px;margin:0;display:flex;flex-wrap:wrap;justify-content:center}
+.soon-title span{display:inline-block;background:linear-gradient(90deg,var(--accent),var(--c3),var(--accent-2),var(--accent));background-size:300% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;animation:wave 1.8s ease-in-out infinite,shine 5s linear infinite;animation-delay:calc(var(--i)*.07s),0s}
+@keyframes wave{0%,100%{transform:translateY(0)}50%{transform:translateY(-14px)}}@keyframes shine{to{background-position:300% 0}}
+.soon-sub{max-width:420px;color:var(--muted);margin:0;animation:rise .9s .2s both}
+.bar{width:min(300px,80%);height:8px;border-radius:99px;background:var(--surface-2);overflow:hidden}.bar b{display:block;height:100%;width:40%;border-radius:99px;background:linear-gradient(90deg,var(--accent),var(--accent-2));animation:load 2.6s ease-in-out infinite}
+@keyframes load{0%{transform:translateX(-100%)}100%{transform:translateX(260%)}}@keyframes rise{from{opacity:0;transform:translateY(16px)}}
+.chips{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}.chips span{padding:8px 14px;border-radius:99px;border:1px solid var(--line);background:var(--surface-2);font:700 12px "DM Sans",sans-serif;animation:rise .7s both,float 4s ease-in-out infinite}
+.chips span:nth-child(1){animation-delay:.4s,0s}.chips span:nth-child(2){animation-delay:.55s,.6s}.chips span:nth-child(3){animation-delay:.7s,1.2s}.chips span:nth-child(4){animation-delay:.85s,1.8s}
+@keyframes float{50%{transform:translateY(-6px)}}
+.spark{position:absolute;width:6px;height:6px;border-radius:50%;background:var(--accent-2);opacity:0;animation:up 6s linear infinite}
+@keyframes up{10%{opacity:.8}to{transform:translateY(-70vh);opacity:0}}
+.badge.soon{background:var(--accent-soft);color:var(--accent)}
+body[data-page=shop] .dock-ind{opacity:0}
+@media(prefers-reduced-motion:reduce){.shop-hero *{animation:none!important}}
+</style>
+<script src="admin-config.js"></script><script src="theme-anim.js"></script><script src="nav.js" defer></script><script src="pwa.js" defer></script><script src="track.js" defer></script>
+</head>
+<body data-page="shop"><div class="app-shell">
+<header class="topbar"><div class="topbar-left">
+<button class="icon-button menu-button" type="button" data-menu-toggle aria-label="Open menu" aria-expanded="false" aria-controls="drawer"><svg viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h10"/></svg></button>
+<a class="brand" href="index.html"><span class="brand-mark">A</span><span>Asharchives</span></a></div></header>
+<main><section class="shop-hero" id="hero"><div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div>
+<div class="inner">
+<div class="bag"><i></i><i></i><svg viewBox="0 0 24 24"><path d="M5 8h14l-1 12H6L5 8Z"/><path d="M9 8V6.5a3 3 0 0 1 6 0V8"/></svg></div>
+<p class="eyebrow"><span class="eyebrow-dot"></span> THE ASHARCHIVES SHOP</p>
+<h1 class="soon-title" id="t" aria-label="Coming Soon!!!"></h1>
+<p class="soon-sub">Study gear, notes bundles and merch for future doctors — something good is being prepared.</p>
+<div class="bar"><b></b></div>
+<div class="chips"><span>📚 Notes</span><span>🩺 Gear</span><span>🎧 Merch</span><span>✦ Bundles</span></div>
+</div></section></main></div>
+<script>
+const t=document.getElementById("t");[..."Coming Soon!!!"].forEach((c,i)=>{if(c===" "){t.append(" ");return}const s=document.createElement("span");s.textContent=c;s.style.setProperty("--i",i);t.append(s)});
+const h=document.getElementById("hero");for(let i=0;i<18;i++){const s=document.createElement("i");s.className="spark";s.style.cssText=`left:${Math.random()*100}%;bottom:-10px;animation-delay:${Math.random()*6}s;animation-duration:${4+Math.random()*4}s`;h.append(s)}
+</script></body></html>

@@ -22,6 +22,7 @@
     cards: svg('<rect x="3.5" y="7" width="13" height="12.5" rx="2.5"/><path d="M7.5 4.2h11A2 2 0 0 1 20.5 6.2v10.3"/><path d="M7.5 12h5M7.5 15.2h3"/>'),
     notes: svg('<path d="M6 3.5h9.5L19.5 7.5V20a.5.5 0 0 1-.5.5H6a.5.5 0 0 1-.5-.5V4a.5.5 0 0 1 .5-.5Z"/><path d="M15 3.8V8h4.2"/><path d="M8.5 12.5h7M8.5 15.5h7M8.5 18.5h4"/>'),
     focus: svg('<circle cx="12" cy="13.5" r="7.5"/><path d="M12 9.5v4l2.6 1.6"/><path d="M9.5 3.5h5"/>'),
+    shop: svg('<path d="M5 8h14l-1 12H6L5 8Z"/><path d="M9 8V6.5a3 3 0 0 1 6 0V8"/>'),
     menu: svg('<path d="M4 7h16M4 12h16M4 17h10"/>'),
     close: svg('<path d="m6 6 12 12M18 6 6 18"/>'),
     sun: svg('<circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M4.93 4.93l1.42 1.42m11.3 11.3 1.42 1.42M2 12h2m16 0h2M4.93 19.07l1.42-1.42m11.3-11.3 1.42-1.42"/>'),
@@ -72,6 +73,7 @@
       <p class="drawer-label">Library</p>
       ${link("home", "index.html", "Home")}
       <a class="drawer-link" href="index.html#subjects">${ICON.grid}<span>All subjects</span></a>
+      ${parse("ash-settings", {}).shop === false ? "" : link("shop", "shop.html", "Shop", '<em class="badge soon">Soon</em>')}
     </nav>
     <div class="drawer-foot">
       <div class="drawer-today" aria-label="Today at a glance">

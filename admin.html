@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><meta name="robots" content="noindex,nofollow"><meta name="theme-color" content="#f3f8fa">
+<title>Admin — Asharchives</title>
+<script>try{document.documentElement.dataset.theme=localStorage.getItem("asharrow-theme")||(matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light")}catch(e){}</script>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@500;700;800&display=swap" rel="stylesheet">
+<link rel="icon" href="favicon-32.png"><link rel="stylesheet" href="styles.css"><link rel="stylesheet" href="theme.css">
+<style>
+body{font-family:"DM Sans",sans-serif;background:var(--bg);color:var(--ink);margin:0}.w{max-width:1100px;margin:0 auto;padding:20px 16px 60px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--card-sh);padding:18px}
+h1,h2,.v{font-family:Manrope,sans-serif;margin:0}h2{font-size:16px;margin-bottom:12px}
+.top{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:18px}
+.grid{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));margin-bottom:14px}
+.k small{color:var(--muted);font-weight:600}.v{font-size:30px;font-weight:800;letter-spacing:-1px;margin-top:4px}
+.two{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));margin-bottom:14px}
+input,select,textarea,button{font:600 14px "DM Sans",sans-serif;padding:10px 12px;border-radius:12px;border:1px solid var(--line);background:var(--surface-2);color:var(--ink)}
+button{cursor:pointer}button.p{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}button.d{color:#e5484d}
+.chart{display:flex;align-items:flex-end;gap:3px;height:140px}.chart div{flex:1;background:linear-gradient(var(--accent-2),var(--accent));border-radius:4px 4px 0 0;min-height:2px;position:relative;transition:height .5s}
+.chart div:hover::after{content:attr(data-t);position:absolute;bottom:100%;left:50%;transform:translateX(-50%);background:#101012;color:#fff;padding:3px 7px;border-radius:6px;font-size:11px;white-space:nowrap}
+table{width:100%;border-collapse:collapse;font-size:13px}td,th{text-align:left;padding:7px 4px;border-bottom:1px solid var(--line)}th{color:var(--muted)}
+.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:10px}label.t{display:flex;gap:8px;align-items:center;margin-bottom:10px}
+#gate{max-width:360px;margin:12vh auto}#gate form{display:flex;flex-direction:column;gap:10px}.note{color:var(--muted);font-size:12px;margin:8px 0 0}
+</style>
+<script src="admin-config.js"></script></head>
+<body data-page="admin">
+<div id="gate" class="card"><h1>Admin</h1><p class="note" id="gnote"></p>
+<form id="gf"><input id="ge" type="email" placeholder="Email" autocomplete="username" hidden><input id="gp" type="password" placeholder="Password" autocomplete="current-password" required><button class="p">Sign in</button><p class="note" id="gerr" style="color:#e5484d"></p></form></div>
+<div class="w" id="app" hidden>
+<div class="top"><div><h1>Dashboard</h1><span class="note" id="src"></span></div>
+<div class="row"><select id="rng"><option value="7">Last 7 days</option><option value="30" selected>Last 30 days</option><option value="90">Last 90 days</option><option value="0">All time</option></select><button id="rf">Refresh</button><button id="out">Sign out</button></div></div>
+<div class="grid" id="kpi"></div>
+<div class="two"><div class="card"><h2>Visits per day</h2><div class="chart" id="c1"></div></div><div class="card"><h2>Minutes watched per day</h2><div class="chart" id="c2"></div></div></div>
+<div class="two"><div class="card"><h2>Top pages</h2><table id="pg"></table></div><div class="card"><h2>Busiest hours</h2><div class="chart" id="c3"></div></div></div>
+<div class="two"><div class="card"><h2>Site controls</h2>
+<label class="t"><input type="checkbox" id="sm"> Maintenance mode (hides the site)</label>
+<label class="t"><input type="checkbox" id="ss" checked> Show Shop in menu</label>
+<textarea id="sa" rows="2" placeholder="Announcement banner (empty = none)" style="width:100%;box-sizing:border-box"></textarea>
+<div class="row" style="margin-top:10px"><button class="p" id="sv">Save controls</button><span class="note" id="sn"></span></div></div>
+<div class="card"><h2>Data tools</h2><div class="row"><button id="ej">Export JSON</button><button id="ec">Export CSV</button><button class="d" id="cl">Clear local log</button></div><p class="note">Clearing only removes this browser's copy. Cloud events are managed in Supabase.</p></div></div>
+<div class="card"><h2>Recent activity</h2><table id="rc"></table></div>
+</div>
+<script>
+const C=window.ASH_CFG||{},$=s=>document.querySelector(s),S=sessionStorage,L=localStorage,cloud=!!C.url;
+const H=async s=>[...new Uint8Array(await crypto.subtle.digest("SHA-256",new TextEncoder().encode(s)))].map(b=>b.toString(16).padStart(2,"0")).join("");
+const sb=(p,o={})=>fetch(C.url+p,{...o,headers:{apikey:C.key,Authorization:"Bearer "+S.getItem("ash-tok"),"Content-Type":"application/json",...o.headers}});
+let ev=[];
+const J=(k,f)=>{try{return JSON.parse(L.getItem(k))??f}catch{return f}};
+$("#ge").hidden=!cloud;$("#gnote").textContent=cloud?"Sign in with your admin account.":(L.getItem("ash-admin-hash")?"Local mode — enter your passphrase.":"Local mode — choose a passphrase to protect this dashboard on this device.");
+$("#gf").onsubmit=async e=>{e.preventDefault();$("#gerr").textContent="";
+ if(cloud){const r=await fetch(C.url+"/auth/v1/token?grant_type=password",{method:"POST",headers:{apikey:C.key,"Content-Type":"application/json"},body:JSON.stringify({email:$("#ge").value,password:$("#gp").value})}),d=await r.json();if(!d.access_token)return $("#gerr").textContent="Wrong email or password.";S.setItem("ash-tok",d.access_token)}
+ else{const h=await H($("#gp").value),s=L.getItem("ash-admin-hash");if(!s)L.setItem("ash-admin-hash",h);else if(s!==h)return $("#gerr").textContent="Wrong passphrase.";S.setItem("ash-tok","local")}
+ boot()};
+$("#out").onclick=()=>{S.removeItem("ash-tok");location.reload()};
+async function load(){if(cloud){const r=await sb("/rest/v1/events?select=*&order=t.desc&limit=20000");if(!r.ok){S.removeItem("ash-tok");location.reload();return}ev=await r.json();const s=await sb("/rest/v1/settings?id=eq.1&select=data"),d=await s.json();if(d[0])L.setItem("ash-settings",JSON.stringify(d[0].data))}else ev=J("ash-events",[]);
+ const st=J("ash-settings",{});$("#sm").checked=!!st.maint;$("#ss").checked=st.shop!==false;$("#sa").value=st.announce||"";$("#src").textContent=cloud?"Live data from all visitors":"Local mode — only this device's data. See SETUP-ADMIN.md for all-visitor analytics."}
+function render(){const days=+$("#rng").value,from=days?Date.now()-days*864e5:0,e=ev.filter(x=>x.t>=from),sum=k=>e.filter(x=>x.k===k).reduce((n,x)=>n+(x.n||1),0);
+ const mins=sum("watch"),K=[["Total visits",sum("visit")],["Page views",sum("view")],["Unique visitors",new Set(e.map(x=>x.u)).size],["Lectures completed",sum("lecture")],["Minutes watched",mins],["Hours watched",(mins/60).toFixed(1)],["Questions answered",sum("q")]];
+ $("#kpi").innerHTML=K.map(([a,b])=>`<div class="card k"><small>${a}</small><div class="v">${b}</div></div>`).join("");
+ const n=Math.min(days||30,30),ds=[...Array(n)].map((_,i)=>{const d=new Date(Date.now()-(n-1-i)*864e5);return d.toDateString()});
+ const bars=(id,fn,labels)=>{const v=labels.map(fn),m=Math.max(1,...v);$(id).innerHTML=v.map((x,i)=>`<div style="height:${x/m*100}%" data-t="${labels[i]}: ${x}"></div>`).join("")};
+ bars("#c1",d=>e.filter(x=>x.k==="visit"&&new Date(x.t).toDateString()===d).length,ds);
+ bars("#c2",d=>e.filter(x=>x.k==="watch"&&new Date(x.t).toDateString()===d).length,ds);
+ bars("#c3",h=>e.filter(x=>x.k==="view"&&new Date(x.t).getHours()===+h).length,[...Array(24)].map((_,i)=>i));
+ const pc={};e.filter(x=>x.k==="view").forEach(x=>pc[x.p]=(pc[x.p]||0)+1);
+ $("#pg").innerHTML="<tr><th>Page</th><th>Views</th></tr>"+Object.entries(pc).sort((a,b)=>b[1]-a[1]).map(([p,c])=>`<tr><td>${p}</td><td>${c}</td></tr>`).join("");
+ $("#rc").innerHTML="<tr><th>Time</th><th>Event</th><th>Page</th><th>Visitor</th></tr>"+[...e].sort((a,b)=>b.t-a.t).slice(0,15).map(x=>`<tr><td>${new Date(x.t).toLocaleString()}</td><td>${x.k}${x.n>1?" ×"+x.n:""}</td><td>${x.p}</td><td>${x.u}</td></tr>`).join("")}
+$("#sv").onclick=async()=>{const d={maint:$("#sm").checked,shop:$("#ss").checked,announce:$("#sa").value.trim()};L.setItem("ash-settings",JSON.stringify(d));
+ if(cloud){const r=await sb("/rest/v1/settings",{method:"POST",headers:{Prefer:"resolution=merge-duplicates"},body:JSON.stringify({id:1,data:d})});$("#sn").textContent=r.ok?"Saved for all visitors ✓":"Save failed — check SETUP-ADMIN.md"}else $("#sn").textContent="Saved on this device only ✓"};
+const dl=(n,t,m)=>{const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([t],{type:m}));a.download=n;a.click()};
+$("#ej").onclick=()=>dl("asharchives-events.json",JSON.stringify(ev,null,1),"application/json");
+$("#ec").onclick=()=>dl("asharchives-events.csv","time,visitor,event,page,count\n"+ev.map(x=>[new Date(x.t).toISOString(),x.u,x.k,x.p,x.n].join(",")).join("\n"),"text/csv");
+$("#cl").onclick=()=>{if(confirm("Clear this browser's event log?")){L.removeItem("ash-events");boot()}};
+$("#rng").onchange=render;$("#rf").onclick=()=>boot();
+async function boot(){$("#gate").hidden=true;$("#app").hidden=false;await load();render()}
+if(S.getItem("ash-tok"))boot();
+</script></body></html>

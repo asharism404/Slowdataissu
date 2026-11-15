@@ -1,7 +1,7 @@
-const V = "asharchives-v8", SHELL = V + "-shell", RUNTIME = V + "-runtime";
-const PRECACHE = ["./", "index.html", "lecture.html", "flashcards.html", "notes.html", "qbank.html", "focus.html",
+const V = "asharchives-v10", SHELL = V + "-shell", RUNTIME = V + "-runtime";
+const PRECACHE = ["./", "index.html", "lecture.html", "flashcards.html", "notes.html", "qbank.html", "focus.html", "shop.html", "track.js", "admin-config.js",
   "styles.css", "glass.css", "nav.css", "anim.css", "theme.css", "pyq-day.css", "features.css", "lecture.css", "qbank.css",
-  "videos.js", "subjects.js", "nav.js", "glass.js", "anim.js", "app.js", "pyq-day.js", "lecture.js", "flashcards.js", "notes.js", "focus.js", "qbank.js",
+  "videos.js", "subjects.js", "nav.js", "theme-anim.js", "glass.js", "anim.js", "app.js", "pyq-day.js", "lecture.js", "flashcards.js", "notes.js", "focus.js", "qbank.js",
   "pwa.js", "manifest.webmanifest", "favicon-32.png", "apple-touch-icon.png", "icons/icon-192.png", "icons/icon-512.png"];
 
 self.addEventListener("install", e => {
